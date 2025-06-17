@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoMania - Guia Completo de Motocicletas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5f0c0c 0%, #000000 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .moto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .moto-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .moto-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .moto-card:hover::before {
+            left: 100%;
+        }
+
+        .moto-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .moto-name {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .moto-preview {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .moto-specs {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+
+        .spec-item {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+        }
+
+        .spec-value {
+            display: block;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .moto-detail {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(238, 90, 36, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(238, 90, 36, 0.4);
+        }
+
+        .detail-title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .spec-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .spec-title {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .spec-detail {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 25px 0;
+        }
+
+        .comparison-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-title {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .moto-grid { grid-template-columns: 1fr; }
+            .spec-grid { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="home" class="page active">
+            <header>
+                <h1>🏍️ MotoMania</h1>
+                <p class="subtitle">Seu guia completo sobre motocicletas</p>
+            </header>
+
+            <div class="moto-grid">
+                <div class="moto-card" onclick="showPage('xj6')">
+                    <h3 class="moto-name">Yamaha XJ6</h3>
+                    <p class="moto-preview">Naked esportiva com design agressivo e performance equilibrada</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">600cc</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Potência</span>
+                            <span class="spec-value">77 CV</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Tipo</span>
+                            <span class="spec-value">Naked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moto-card" onclick="showPage('hornet')">
+                    <h3 class="moto-name">Honda Hornet</h3>
+                    <p class="moto-preview">Clássica naked Honda com tradição em performance urbana</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">600cc</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Potência</span>
+                            <span class="spec-value">102 CV</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Tipo</span>
+                            <span class="spec-value">Naked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moto-card" onclick="showPage('bmw')">
+                    <h3 class="moto-name">BMW 1200cc</h3>
+                    <p class="moto-preview">Adventure premium alemã para longas viagens e terrenos variados</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">1200cc</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Potência</span>
+                            <span class="spec-value">136 CV</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Tipo</span>
+                            <span class="spec-value">Adventure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moto-card" onclick="showPage('bajaj')">
+                    <h3 class="moto-name">Bajaj 400</h3>
+                    <p class="moto-preview">Naked indiana com excelente custo-benefício e tecnologia moderna</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">400cc</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Potência</span>
+                            <span class="spec-value">40 CV</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Tipo</span>
+                            <span class="spec-value">Naked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moto-card" onclick="showPage('start160')">
+                    <h3 class="moto-name">Start 160</h3>
+                    <p class="moto-preview">Comparação com Twister e Mix - entrada no mundo das motos</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">160cc</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Potência</span>
+                            <span class="spec-value">16 CV</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Tipo</span>
+                            <span class="spec-value">Urbana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moto-card" onclick="showPage('harley')">
+                    <h3 class="moto-name">Harley Davidson</h3>
+                    <p class="moto-preview">Ícone americano com tradição e estilo inconfundível</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">Variable</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Estilo</span>
+                            <span class="spec-value">Cruiser</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Origem</span>
+                            <span class="spec-value">EUA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="moto-card" onclick="showPage('royal')">
+                    <h3 class="moto-name">Royal Enfield</h3>
+                    <p class="moto-preview">Tradição britânica com charme retrô e mecânica robusta</p>
+                    <div class="moto-specs">
+                        <div class="spec-item">
+                            <span>Motor</span>
+                            <span class="spec-value">Variable</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Estilo</span>
+                            <span class="spec-value">Clássica</span>
+                        </div>
+                        <div class="spec-item">
+                            <span>Origem</span>
+                            <span class="spec-value">Reino Unido</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Páginas Detalhadas -->
+        <div id="xj6" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">Yamaha XJ6</h2>
+                <p class="description">A Yamaha XJ6 é uma motocicleta naked que combina design moderno com performance confiável. Equipada com um motor de quatro cilindros de 600cc, oferece uma experiência de pilotagem equilibrada tanto para uso urbano quanto em estradas.</p>
+                
+                <div class="spec-grid">
+                    <div class="spec-box">
+                        <div class="spec-title">Motor</div>
+                        <div class="spec-detail">600cc 4 cilindros</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Potência</div>
+                        <div class="spec-detail">77 CV @ 10.000 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Torque</div>
+                        <div class="spec-detail">60 Nm @ 8.500 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Peso</div>
+                        <div class="spec-detail">205 kg</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Tanque</div>
+                        <div class="spec-detail">17 litros</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Velocidade Máxima</div>
+                        <div class="spec-detail">~200 km/h</div>
+                    </div>
+                </div>
+
+                <p class="description"><strong>Características:</strong> A XJ6 é conhecida por sua posição de pilotagem confortável, freios eficientes e acabamento de qualidade. Ideal para motociclistas que procuram uma moto versátil e confiável para o dia a dia.</p>
+            </div>
+        </div>
+
+        <div id="hornet" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">Honda Hornet</h2>
+                <p class="description">A Honda Hornet é uma das naked mais icônicas do mercado, famosa por sua agilidade urbana e design agressivo. Com motor derivado da CBR600RR, oferece performance esportiva em um pacote naked.</p>
+                
+                <div class="spec-grid">
+                    <div class="spec-box">
+                        <div class="spec-title">Motor</div>
+                        <div class="spec-detail">600cc 4 cilindros</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Potência</div>
+                        <div class="spec-detail">102 CV @ 12.000 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Torque</div>
+                        <div class="spec-detail">66 Nm @ 10.500 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Peso</div>
+                        <div class="spec-detail">178 kg</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Tanque</div>
+                        <div class="spec-detail">18 litros</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Velocidade Máxima</div>
+                        <div class="spec-detail">~220 km/h</div>
+                    </div>
+                </div>
+
+                <p class="description"><strong>Características:</strong> Motor de alta rotação, chassis ágil, excelente para tráfego urbano. A Hornet é uma escolha popular entre motociclistas que buscam adrenalina e praticidade no dia a dia.</p>
+            </div>
+        </div>
+
+        <div id="bmw" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">BMW 1200cc (GS Series)</h2>
+                <p class="description">A BMW R1200GS é a referência mundial em motocicletas adventure. Projetada para enfrentar qualquer terreno, combina tecnologia alemã de ponta com robustez e versatilidade incomparáveis.</p>
+                
+                <div class="spec-grid">
+                    <div class="spec-box">
+                        <div class="spec-title">Motor</div>
+                        <div class="spec-detail">1200cc Boxer</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Potência</div>
+                        <div class="spec-detail">136 CV @ 7.750 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Torque</div>
+                        <div class="spec-detail">143 Nm @ 6.500 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Peso</div>
+                        <div class="spec-detail">249 kg</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Tanque</div>
+                        <div class="spec-detail">20 litros</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Suspensão</div>
+                        <div class="spec-detail">210mm (diant/tras)</div>
+                    </div>
+                </div>
+
+                <p class="description"><strong>Características:</strong> Tecnologias como ABS, controle de tração, modos de pilotagem, suspensão eletrônica (opcional). Ideal para aventureiros que não abrem mão do conforto e segurança em longas viagens.</p>
+            </div>
+        </div>
+
+        <div id="bajaj" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">Bajaj Dominar 400</h2>
+                <p class="description">A Bajaj Dominar 400 é uma naked que oferece excelente custo-benefício. Com design inspirado nas big bikes e motor desenvolvido em parceria com a KTM, é uma ótima opção para quem busca performance sem gastar muito.</p>
+                
+                <div class="spec-grid">
+                    <div class="spec-box">
+                        <div class="spec-title">Motor</div>
+                        <div class="spec-detail">373cc monocilindro</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Potência</div>
+                        <div class="spec-detail">40 CV @ 8.650 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Torque</div>
+                        <div class="spec-detail">35 Nm @ 7.000 rpm</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Peso</div>
+                        <div class="spec-detail">184 kg</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Tanque</div>
+                        <div class="spec-detail">13 litros</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Velocidade Máxima</div>
+                        <div class="spec-detail">~155 km/h</div>
+                    </div>
+                </div>
+
+                <p class="description"><strong>Características:</strong> ABS duplo canal, freio a disco dianteiro e traseiro, painel digital completo, LED em toda iluminação. Ótima opção para iniciantes em motos de média cilindrada.</p>
+            </div>
+        </div>
+
+        <div id="start160" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">Start 160 vs Twister vs Mix</h2>
+                <p class="description">Comparação entre motocicletas de entrada, ideais para primeiros passos no mundo das duas rodas. Vamos analisar as características de cada uma para ajudar na sua escolha.</p>
+                
+                <div class="comparison-section">
+                    <h3 class="comparison-title">Honda Start 160</h3>
+                    <div class="spec-grid">
+                        <div class="spec-box">
+                            <div class="spec-title">Motor</div>
+                            <div class="spec-detail">162cc OHC</div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-title">Potência</div>
+                            <div class="spec-detail">16,1 CV</div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-title">Consumo</div>
+                            <div class="spec-detail">~35 km/l</div>
+                        </div>
+                    </div>
+                    <p class="description">Posição mais ereta, conforto urbano, boa economia.</p>
+                </div>
+
+                <div class="comparison-section">
+                    <h3 class="comparison-title">Honda Twister</h3>
+                    <div class="spec-grid">
+                        <div class="spec-box">
+                            <div class="spec-title">Motor</div>
+                            <div class="spec-detail">249cc OHC</div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-title">Potência</div>
+                            <div class="spec-detail">23,5 CV</div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-title">Consumo</div>
+                            <div class="spec-detail">~30 km/l</div>
+                        </div>
+                    </div>
+                    <p class="description">Mais esportiva, maior potência, ideal para estradas.</p>
+                </div>
+
+                <div class="comparison-section">
+                    <h3 class="comparison-title">Honda Mix</h3>
+                    <div class="spec-grid">
+                        <div class="spec-box">
+                            <div class="spec-title">Motor</div>
+                            <div class="spec-detail">149cc OHC</div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-title">Potência</div>
+                            <div class="spec-detail">13,2 CV</div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-title">Consumo</div>
+                            <div class="spec-detail">~40 km/l</div>
+                        </div>
+                    </div>
+                    <p class="description">Mais econômica, urbana, ideal para iniciantes.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="harley" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">Harley Davidson</h2>
+                <p class="description">A Harley Davidson é mais que uma motocicleta, é um estilo de vida. Com mais de 100 anos de história, representa liberdade, tradição e o sonho americano sobre duas rodas.</p>
+                
+                <div class="spec-grid">
+                    <div class="spec-box">
+                        <div class="spec-title">Modelos Populares</div>
+                        <div class="spec-detail">Sportster, Street, Touring</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Motor Característico</div>
+                        <div class="spec-detail">V-Twin 45°</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Som</div>
+                        <div class="spec-detail">Potato-potato</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Cilindradas</div>
+                        <div class="spec-detail">883cc - 1868cc</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Estilo</div>
+                        <div class="spec-detail">Cruiser/Touring</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Origem</div>
+                        <div class="spec-detail">Milwaukee, EUA</div>
+                    </div>
+                </div>
+
+                <p class="description"><strong>Modelos Destacados:</strong></p>
+                <div class="comparison-section">
+                    <p><strong>Street 750:</strong> Entrada na marca, motor Revolution</p>
+                    <p><strong>Sportster Iron 883:</strong> Clássica bobber, visual despojado</p>
+                    <p><strong>Fat Boy:</strong> Ícone dos anos 90, motor Milwaukee-Eight</p>
+                    <p><strong>Road King:</strong> Touring confortável para longas viagens</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="royal" class="page">
+            <button class="back-btn" onclick="showPage('home')">← Voltar ao Menu</button>
+            <div class="moto-detail">
+                <h2 class="detail-title">Royal Enfield</h2>
+                <p class="description">Royal Enfield carrega a tradição britânica de motocicletas clássicas. Fundada em 1901, é uma das marcas mais antigas ainda em produção, oferecendo motos com charme vintage e mecânica robusta.</p>
+                
+                <div class="spec-grid">
+                    <div class="spec-box">
+                        <div class="spec-title">Modelos Populares</div>
+                        <div class="spec-detail">Classic, Himalayan, Meteor</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Motor Característico</div>
+                        <div class="spec-detail">Monocilindro</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Som</div>
+                        <div class="spec-detail">Thump característico</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Cilindradas</div>
+                        <div class="spec-detail">350cc - 650cc</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Estilo</div>
+                        <div class="spec-detail">Clássica/Retro</div>
+                    </div>
+                    <div class="spec-box">
+                        <div class="spec-title">Produção</div>
+                        <div class="spec-detail">Chennai, Índia</div>
+                    </div>
+                </div>
+
+                <p class="description"><strong>Mo
